@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 async function render(pathname) {
@@ -22,8 +23,8 @@ async function render(pathname) {
   );
 }
 
-test("server-renders the planner at the domain root and named route", async () => {
-  for (const pathname of ["/", "/roamly-travel-planner"]) {
+test("server-renders the planner at the named route", async () => {
+  for (const pathname of ["/roamly-travel-planner"]) {
     const response = await render(pathname);
     assert.equal(response.status, 200, pathname);
     assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
@@ -36,4 +37,15 @@ test("server-renders the planner at the domain root and named route", async () =
     assert.match(html, /예원/);
     assert.match(html, /\/_next\/static\//);
   }
+});
+
+test("includes the standalone planner HTML for the Vercel root rewrite", async () => {
+  const html = await readFile(
+    new URL("../public/roamly-travel-planner.html", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(html, /<html lang="ko">/i);
+  assert.match(html, /<title>Roamly · 내 여행<\/title>/i);
+  assert.match(html, /id="app"/i);
 });

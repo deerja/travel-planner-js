@@ -1,3 +1,9 @@
 {
-  "buildCommand": "npm run build:vercel"
+  "buildCommand": "npm run build:vercel",
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/roamly-travel-planner.html"
+    }
+  ]
 }
