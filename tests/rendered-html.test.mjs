@@ -48,4 +48,6 @@ test("includes the standalone planner HTML for the Vercel root rewrite", async (
   assert.match(html, /<html lang="ko">/i);
   assert.match(html, /<title>Roamly · 내 여행<\/title>/i);
   assert.match(html, /id="app"/i);
+  assert.match(html, /__ROAMLY_GOOGLE_MAPS_API_KEY__/);
+  assert.doesNotMatch(html, /AIzaSy[A-Za-z0-9_-]+/);
 });

@@ -4943,7 +4943,7 @@
       try{const payload=window.name.slice(LOCALHOST_STORAGE_BRIDGE.length),parsed=JSON.parse(payload);if(Array.isArray(parsed?.trips))localStorage.setItem(STORAGE_KEY,JSON.stringify(parsed))}catch{}finally{window.name=''}
     }
     const ROAMLY_CONFIG={
-      googleMapsApiKey:'AIzaSyAccTMs1LCOaEsrux9kBmWlBSJgBytIzys',
+      googleMapsApiKey:'__ROAMLY_GOOGLE_MAPS_API_KEY__',
       googleMapId:'DEMO_MAP_ID',
       environment:'development'
     };
