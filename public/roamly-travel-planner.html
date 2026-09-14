@@ -4971,7 +4971,7 @@
     let db;try{const current=JSON.parse(localStorage.getItem(STORAGE_KEY));const legacy=JSON.parse(localStorage.getItem('roamly-complete-state'));db=current||migrateLegacy(legacy)||structuredClone(seed)}catch{db=structuredClone(seed)}
     function ensureHomePastTrip(database){if(!database?.trips||database.trips.some(trip=>trip.id===HOME_PAST_TRIP_ID))return false;database.trips.push(createHomePastTrip());return true}
     if(ensureHomePastTrip(db))localStorage.setItem(STORAGE_KEY,JSON.stringify(db));
-    const SHANGHAI_ITINERARY_VERSION='shanghai-destination-itinerary-v8';
+    const SHANGHAI_ITINERARY_VERSION='shanghai-destination-itinerary-v9';
     const SHANGHAI_TRIP_ID='shanghai';
     const SHANGHAI_ACCOMMODATION_ID='shanghai-accommodation-ji-hotel-fuzhou-road';
     const SHANGHAI_FLIGHTS=[
@@ -5045,16 +5045,12 @@
           {id:'free-dinner',category:'food',subCategory:'dinner',title:'각자 자유 저녁',startTime:'18:30',timeLabel:'이후',status:'planned',isFlexible:true},
           {id:'redlips',category:'food',subCategory:'lateNight',title:'레드립스',timeLabel:'야식',status:'planned',locationKey:'redlips',isFlexible:true}
         ]),
-        day(3,'2026-09-20','주자자오 수향마을 · 예원 · 황푸강 요트 야경',[
-          {id:'morning-ready',category:'preparation',title:'외출 준비',startTime:'07:30',endTime:'08:00'},
-          {id:'leave-hotel',category:'transport',title:'호텔 출발',startTime:'08:00',accommodationId:SHANGHAI_ACCOMMODATION_ID},
-          {id:'city-to-zhujiajiao',category:'transport',title:'상하이 시내 → 주자자오',startTime:'08:00',endTime:'09:30',transport:'상하이 시내 → 주자자오'},
-          {id:'zhujiajiao',category:'sightseeing',title:'주자자오 수향마을',description:'뱃놀이 / 골목 산책',startTime:'09:30',endTime:'12:30',locationKey:'zhujiajiao',isFlexible:true},
-          {id:'zhujiajiao-to-city',category:'transport',title:'주자자오 → 상하이 시내',startTime:'12:30',endTime:'14:00',transport:'주자자오 → 신천지'},
-          {id:'diandude',category:'food',subCategory:'lunch',title:'점도덕',description:'중식 · 딤섬 / 카카오페이 200위안 이상 결제 시 20위안 할인',startTime:'14:00',endTime:'15:15',locationKey:'diandude',isFlexible:true},
-          {id:'diandude-to-yuyuan',category:'transport',title:'점도덕 → 예원',startTime:'15:15',endTime:'15:40',transport:'신천지 → 예원'},
-          {id:'yuyuan',category:'sightseeing',title:'예원',description:'정원 입장 마감 16:00 · 예원 상가 산책 포함',startTime:'15:40',endTime:'17:00',locationKey:'yuyuan',isFlexible:true},
-          {id:'yuyuan-to-hongkuijia',category:'transport',title:'예원 → 홍쿠이지아',startTime:'17:00',endTime:'17:20',transport:'예원 → 金陵东路'},
+        day(3,'2026-09-20','예원 · 홍쿠이지아 · 황푸강 요트 야경',[
+          {id:'morning-ready',category:'preparation',title:'외출 준비',startTime:'09:00',endTime:'09:40'},
+          {id:'diandude',category:'food',subCategory:'lunch',title:'점도덕',description:'중식 · 딤섬 / 카카오페이 200위안 이상 결제 시 20위안 할인',startTime:'12:00',endTime:'13:15',locationKey:'diandude',isFlexible:true},
+          {id:'diandude-to-yuyuan',category:'transport',title:'점도덕 → 예원',startTime:'13:15',endTime:'13:40',transport:'신천지 → 예원'},
+          {id:'yuyuan',category:'sightseeing',title:'예원',description:'정원 입장 마감 16:00 · 예원 상가 산책 포함',startTime:'13:40',endTime:'16:40',locationKey:'yuyuan',isFlexible:true},
+          {id:'yuyuan-to-hongkuijia',category:'transport',title:'예원 → 홍쿠이지아',startTime:'16:40',endTime:'17:10',transport:'예원 → 金陵东路'},
           {id:'hongkuijia',category:'food',subCategory:'dinner',title:'홍쿠이지아',description:'석식 · 마라롱샤 (红盔甲·小龙虾)',startTime:'17:20',endTime:'18:50',locationKey:'hongkuijia',isFlexible:true},
           {id:'hongkuijia-to-lujiazui',category:'transport',title:'홍쿠이지아 → 정대광장',startTime:'18:50',endTime:'19:20',transport:'인민광장 → 루자쭈이'},
           {id:'holiland',category:'food',subCategory:'snack',title:'홀리랜드 Travel 정대광장점',description:'간식 · 카카오페이 150위안 이상 결제 시 18위안 할인 (일월광점 · 메트로시티점 · 창닝롱즈멍점도 가능)',startTime:'19:20',endTime:'20:00',locationKey:'holiland',isFlexible:true},
