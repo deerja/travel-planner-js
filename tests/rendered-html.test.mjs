@@ -51,3 +51,18 @@ test("includes the standalone planner HTML for the Vercel root rewrite", async (
   assert.match(html, /__ROAMLY_GOOGLE_MAPS_API_KEY__/);
   assert.doesNotMatch(html, /AIzaSy[A-Za-z0-9_-]+/);
 });
+
+test("routes the root and named production entrypoints to the current planner", async () => {
+  const vercelConfig = JSON.parse(
+    await readFile(new URL("../vercel.json", import.meta.url), "utf8"),
+  );
+  const rewrites = new Map(
+    vercelConfig.rewrites.map(({ source, destination }) => [source, destination]),
+  );
+
+  assert.equal(rewrites.get("/"), "/roamly-travel-planner.html");
+  assert.equal(
+    rewrites.get("/roamly-travel-planner"),
+    "/roamly-travel-planner.html",
+  );
+});

@@ -4,6 +4,10 @@
     {
       "source": "/",
       "destination": "/roamly-travel-planner.html"
+    },
+    {
+      "source": "/roamly-travel-planner",
+      "destination": "/roamly-travel-planner.html"
     }
   ]
 }

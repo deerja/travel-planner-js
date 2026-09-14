@@ -4971,7 +4971,7 @@
     let db;try{const current=JSON.parse(localStorage.getItem(STORAGE_KEY));const legacy=JSON.parse(localStorage.getItem('roamly-complete-state'));db=current||migrateLegacy(legacy)||structuredClone(seed)}catch{db=structuredClone(seed)}
     function ensureHomePastTrip(database){if(!database?.trips||database.trips.some(trip=>trip.id===HOME_PAST_TRIP_ID))return false;database.trips.push(createHomePastTrip());return true}
     if(ensureHomePastTrip(db))localStorage.setItem(STORAGE_KEY,JSON.stringify(db));
-    const SHANGHAI_ITINERARY_VERSION='shanghai-destination-itinerary-v4';
+    const SHANGHAI_ITINERARY_VERSION='shanghai-destination-itinerary-v8';
     const SHANGHAI_TRIP_ID='shanghai';
     const SHANGHAI_ACCOMMODATION_ID='shanghai-accommodation-ji-hotel-fuzhou-road';
     const SHANGHAI_FLIGHTS=[
@@ -4995,7 +4995,13 @@
       xintiandi:{id:'shanghai-location-xintiandi',name:'신천지',address:'Madang Road',area:'황푸',latitude:31.2185,longitude:121.4751},
       redlips:{id:'shanghai-location-redlips',name:'레드립스',address:'宏伊国际广场 B1, 南京东路299号',area:'난징동루',latitude:31.2370254,longitude:121.484528},
       zhujiajiao:{id:'shanghai-location-zhujiajiao',name:'주자자오 수향마을',address:'Zhujiajiao, Qingpu District, Shanghai',area:'칭푸',latitude:31.111667,longitude:121.051667},
-      haidilao:{id:'shanghai-location-haidilao',name:'하이디라오',address:'上海市黄浦区南京东路830号 第一百货5楼',area:'난징동루',latitude:31.2355779,longitude:121.4747182,googlePlaceId:'ChIJ2TG4OlpwsjURkc6R75eC-LQ'}
+      haidilao:{id:'shanghai-location-haidilao',name:'하이디라오',address:'上海市黄浦区南京东路830号 第一百货5楼',area:'난징동루',latitude:31.2355779,longitude:121.4747182,googlePlaceId:'ChIJ2TG4OlpwsjURkc6R75eC-LQ'},
+      lillian:{id:'shanghai-location-lillian-bakery',name:'릴리안베이커리',address:'南京西路2-68号 新世界城 B1 (人民广场)',area:'인민광장',latitude:31.23363,longitude:121.47442},
+      amalon:{id:'shanghai-location-amalon-bakery-town',name:'아마론 베이커리 타운',address:'静安区 南京西路 (南京西路역 4번 출구 인근)',area:'징안',latitude:31.23125,longitude:121.45603},
+      amashouzuo:{id:'shanghai-location-ama-shouzuo-xintiandi',name:'아마수작 신천지점',address:'黄浦区 太仓路181弄 新天地 6-15号',area:'신천지',latitude:31.22075,longitude:121.47468},
+      holiland:{id:'shanghai-location-holiland-travel',name:'홀리랜드 Travel 정대광장점',address:'浦东新区 陆家嘴西路168号 正大广场 3F',area:'루자쭈이',latitude:31.24005,longitude:121.49762},
+      hongkuijia:{id:'shanghai-location-hongkuijia',name:'홍쿠이지아',address:'黄浦区 金陵东路500号 亚龙国际广场 2F',area:'인민광장',latitude:31.22655,longitude:121.48062},
+      yachtPier:{id:'shanghai-location-huangpu-yacht',name:'황푸강 요트 선착장',address:'黄浦区 中山东二路 十六铺码头 (선착장 확정 필요)',area:'황푸',latitude:31.228611,longitude:121.494167}
     };
     const ITINERARY_CATEGORY_LABELS={flight:'항공',accommodation:'숙소',food:'식사',cafe:'카페',sightseeing:'관광',transport:'이동',freeTime:'자유시간',preparation:'준비'};
     function createShanghaiItineraryItem({id,day,date,category,subCategory=null,title,description=null,startTime=null,endTime=null,timeLabel=null,order,status='confirmed',locationKey=null,accommodationId=null,flightId=null,isFlexible=false,transport=null,englishName=null}){
@@ -5012,43 +5018,48 @@
         return{id:`sh-d${dayNumber}`,day:dayNumber,date,title,places,transitSegments};
       };
       return[
-        day(1,'2026-09-18','상하이 도착 · 대표 랜드마크 · 야경',[
+        day(1,'2026-09-18','상하이 도착 · 동방명주 · 와이탄 야경',[
           {id:'oz363-departure',category:'flight',title:'OZ363 인천 출발',description:'인천국제공항에서 상하이 푸동국제공항으로 이동',startTime:'10:45',flightId:'shanghai-flight-oz363',transport:'ICN → PVG'},
-          {id:'pvg-arrival',category:'flight',title:'상하이 푸동공항 도착',description:'입국 후 수하물 수령',startTime:'11:45',flightId:'shanghai-flight-oz363',locationKey:'pvg'},
-          {id:'immigration-baggage',category:'preparation',title:'입국심사 및 수하물 수령',startTime:'11:45',endTime:'13:00'},
           {id:'pvg-to-hotel',category:'transport',title:'푸동공항 → 호텔',startTime:'13:00',endTime:'14:00',transport:'PVG → JI Hotel'},
           {id:'hotel-check-in',category:'accommodation',title:'JI Hotel 체크인 / 짐 보관',startTime:'14:00',accommodationId:SHANGHAI_ACCOMMODATION_ID,locationKey:'hotel'},
-          {id:'diandude',category:'food',subCategory:'lunch',title:'점도덕',description:'늦은 점심 / 딤섬',startTime:'14:20',endTime:'15:20',locationKey:'diandude',isFlexible:true},
-          {id:'yuyuan',category:'sightseeing',title:'예원',startTime:'15:30',endTime:'16:40',locationKey:'yuyuan',isFlexible:true},
-          {id:'yuyuan-to-oriental-pearl',category:'transport',title:'예원 → 동방명주',startTime:'16:40',endTime:'17:10',transport:'예원 → 동방명주'},
-          {id:'oriental-pearl',category:'sightseeing',title:'동방명주',startTime:'17:10',endTime:'18:40',locationKey:'orientalPearl',isFlexible:true},
-          {id:'oriental-pearl-to-nanjing',category:'transport',title:'동방명주 → 난징동루 인근',startTime:'18:40',endTime:'19:20',transport:'동방명주 → 난징동루'},
-          {id:'longtimeago',category:'food',subCategory:'dinner',title:'헌지우이치엔',startTime:'19:30',endTime:'20:30',locationKey:'longtimeago',isFlexible:true},
-          {id:'bund',category:'sightseeing',title:'와이탄',description:'와이탄 야경 감상',startTime:'20:30',endTime:'21:30',locationKey:'bund',isFlexible:true},
-          {id:'return-hotel',category:'transport',title:'호텔 복귀',startTime:'21:30',timeLabel:'이후',transport:'와이탄 → JI Hotel'},
+          {id:'lillian-bakery',category:'food',subCategory:'snack',title:'릴리안베이커리',description:'간식 · 에그타르트 / 카카오페이 20% 할인 (최대 10위안)',startTime:'14:20',endTime:'15:00',locationKey:'lillian',isFlexible:true},
+          {id:'hotel-to-oriental-pearl',category:'transport',title:'호텔 → 동방명주',startTime:'15:20',endTime:'16:00',transport:'JI Hotel → 동방명주'},
+          {id:'oriental-pearl',category:'sightseeing',title:'동방명주',description:'전망대 · 루자쭈이 스카이라인',startTime:'16:00',endTime:'18:00',locationKey:'orientalPearl',isFlexible:true},
+          {id:'oriental-pearl-to-nanjing',category:'transport',title:'동방명주 → 난징동루 인근',startTime:'18:00',endTime:'18:40',transport:'동방명주 → 난징동루'},
+          {id:'longtimeago',category:'food',subCategory:'dinner',title:'헌지우이치엔',startTime:'18:50',endTime:'20:10',locationKey:'longtimeago',isFlexible:true},
+          {id:'bund',category:'sightseeing',title:'와이탄 야경',description:'와이탄에서 푸동 스카이라인 야경 감상',startTime:'20:20',endTime:'21:40',locationKey:'bund',isFlexible:true},
+          {id:'return-hotel',category:'transport',title:'호텔 복귀',startTime:'21:40',timeLabel:'이후',transport:'와이탄 → JI Hotel'},
           {id:'fruit-delivery',category:'food',subCategory:'lateNight',title:'과일 배달',timeLabel:'야식',status:'planned',isFlexible:true}
         ]),
-        day(2,'2026-09-19','우캉루 · 프렌치 컨세션 · 신천지',[
-          {id:'breakfast-ready',category:'preparation',title:'조식 및 외출 준비',startTime:'08:30',endTime:'09:30'},
-          {id:'wukang-mansion',category:'sightseeing',title:'우캉맨션',description:'우캉루 / 안푸루 주변 산책 포함',startTime:'09:30',endTime:'11:00',locationKey:'wukang',isFlexible:true},
-          {id:'renheguan',category:'food',subCategory:'lunch',title:'런허관',startTime:'11:30',endTime:'13:00',locationKey:'renheguan',isFlexible:true},
-          {id:'walk-transfer',category:'freeTime',title:'주변 산책 및 이동',startTime:'13:00',endTime:'14:00',status:'planned',isFlexible:true},
-          {id:'rong-zhai',category:'cafe',title:'롱자이',englishName:'Mi Shang Prada Rong Zhai',startTime:'14:00',endTime:'15:30',locationKey:'rongzhai',isFlexible:true},
-          {id:'rong-zhai-to-xintiandi',category:'transport',title:'롱자이 → 신천지',startTime:'15:30',endTime:'16:00',transport:'롱자이 → 신천지'},
-          {id:'xintiandi',category:'sightseeing',title:'신천지',startTime:'16:00',endTime:'18:30',locationKey:'xintiandi',isFlexible:true},
+        day(2,'2026-09-19','런허관 조식 · 우캉맨션 · 신천지',[
+          {id:'morning-ready',category:'preparation',title:'외출 준비',startTime:'08:00',endTime:'08:40'},
+          {id:'renheguan',category:'food',subCategory:'breakfast',title:'런허관',description:'조식 · 상하이식 아침',startTime:'09:00',endTime:'10:15',locationKey:'renheguan',isFlexible:true},
+          {id:'renheguan-to-wukang',category:'transport',title:'런허관 → 우캉맨션',startTime:'10:15',endTime:'10:35',transport:'런허관 → 우캉맨션'},
+          {id:'wukang-mansion',category:'sightseeing',title:'우캉맨션',description:'우캉루 / 안푸루 주변 산책 포함',startTime:'10:35',endTime:'12:00',locationKey:'wukang',isFlexible:true},
+          {id:'wukang-to-rongzhai',category:'transport',title:'우캉맨션 → 롱자이',startTime:'12:00',endTime:'12:30',transport:'우캉맨션 → 롱자이'},
+          {id:'rong-zhai',category:'cafe',subCategory:'lunch',title:'프라다 미샹 카페 (롱자이)',englishName:'Mi Shang Prada Rong Zhai',description:'중식 겸 카페',startTime:'12:30',endTime:'14:00',locationKey:'rongzhai',isFlexible:true},
+          {id:'amalon-bakery',category:'food',subCategory:'snack',title:'아마론 베이커리 타운',description:'간식 · 카카오페이 결제 시 30% 즉시할인',startTime:'14:10',endTime:'14:50',locationKey:'amalon',isFlexible:true},
+          {id:'amalon-to-xintiandi',category:'transport',title:'아마론 베이커리 타운 → 신천지',startTime:'14:50',endTime:'15:20',transport:'난징시루 → 신천지'},
+          {id:'xintiandi',category:'sightseeing',title:'신천지',startTime:'15:20',endTime:'17:30',locationKey:'xintiandi',isFlexible:true},
+          {id:'ama-shouzuo',category:'cafe',subCategory:'snack',title:'아마수작 신천지',description:'간식 · 흑당 밀크티',startTime:'17:30',endTime:'18:10',locationKey:'amashouzuo',isFlexible:true},
           {id:'free-dinner',category:'food',subCategory:'dinner',title:'각자 자유 저녁',startTime:'18:30',timeLabel:'이후',status:'planned',isFlexible:true},
           {id:'redlips',category:'food',subCategory:'lateNight',title:'레드립스',timeLabel:'야식',status:'planned',locationKey:'redlips',isFlexible:true}
         ]),
-        day(3,'2026-09-20','주자자오 수향마을',[
+        day(3,'2026-09-20','주자자오 수향마을 · 예원 · 황푸강 요트 야경',[
+          {id:'morning-ready',category:'preparation',title:'외출 준비',startTime:'07:30',endTime:'08:00'},
           {id:'leave-hotel',category:'transport',title:'호텔 출발',startTime:'08:00',accommodationId:SHANGHAI_ACCOMMODATION_ID},
           {id:'city-to-zhujiajiao',category:'transport',title:'상하이 시내 → 주자자오',startTime:'08:00',endTime:'09:30',transport:'상하이 시내 → 주자자오'},
-          {id:'zhujiajiao',category:'sightseeing',title:'주자자오 수향마을',startTime:'09:30',endTime:'12:30',locationKey:'zhujiajiao',isFlexible:true},
-          {id:'zhujiajiao-lunch',category:'food',subCategory:'lunch',title:'주자자오 현지 점심',startTime:'12:30',endTime:'13:30',status:'planned',isFlexible:true},
-          {id:'zhujiajiao-free',category:'freeTime',title:'주자자오 자유관광',description:'카페 / 뱃놀이 / 골목 산책',startTime:'13:30',endTime:'15:00',status:'planned',isFlexible:true},
-          {id:'zhujiajiao-to-city',category:'transport',title:'주자자오 → 상하이 시내',startTime:'15:00',endTime:'16:30',transport:'주자자오 → 상하이 시내'},
-          {id:'hotel-rest',category:'accommodation',title:'호텔 휴식',startTime:'16:30',endTime:'18:00',accommodationId:SHANGHAI_ACCOMMODATION_ID,locationKey:'hotel',isFlexible:true},
-          {id:'haidilao',category:'food',subCategory:'dinner',title:'하이디라오',startTime:'18:30',endTime:'20:00',locationKey:'haidilao',isFlexible:true},
-          {id:'last-night',category:'freeTime',title:'마지막 밤 자유시간 / 야식',startTime:'20:00',timeLabel:'이후',status:'planned',isFlexible:true}
+          {id:'zhujiajiao',category:'sightseeing',title:'주자자오 수향마을',description:'뱃놀이 / 골목 산책',startTime:'09:30',endTime:'12:30',locationKey:'zhujiajiao',isFlexible:true},
+          {id:'zhujiajiao-to-city',category:'transport',title:'주자자오 → 상하이 시내',startTime:'12:30',endTime:'14:00',transport:'주자자오 → 신천지'},
+          {id:'diandude',category:'food',subCategory:'lunch',title:'점도덕',description:'중식 · 딤섬 / 카카오페이 200위안 이상 결제 시 20위안 할인',startTime:'14:00',endTime:'15:15',locationKey:'diandude',isFlexible:true},
+          {id:'diandude-to-yuyuan',category:'transport',title:'점도덕 → 예원',startTime:'15:15',endTime:'15:40',transport:'신천지 → 예원'},
+          {id:'yuyuan',category:'sightseeing',title:'예원',description:'정원 입장 마감 16:00 · 예원 상가 산책 포함',startTime:'15:40',endTime:'17:00',locationKey:'yuyuan',isFlexible:true},
+          {id:'yuyuan-to-hongkuijia',category:'transport',title:'예원 → 홍쿠이지아',startTime:'17:00',endTime:'17:20',transport:'예원 → 金陵东路'},
+          {id:'hongkuijia',category:'food',subCategory:'dinner',title:'홍쿠이지아',description:'석식 · 마라롱샤 (红盔甲·小龙虾)',startTime:'17:20',endTime:'18:50',locationKey:'hongkuijia',isFlexible:true},
+          {id:'hongkuijia-to-lujiazui',category:'transport',title:'홍쿠이지아 → 정대광장',startTime:'18:50',endTime:'19:20',transport:'인민광장 → 루자쭈이'},
+          {id:'holiland',category:'food',subCategory:'snack',title:'홀리랜드 Travel 정대광장점',description:'간식 · 카카오페이 150위안 이상 결제 시 18위안 할인 (일월광점 · 메트로시티점 · 창닝롱즈멍점도 가능)',startTime:'19:20',endTime:'20:00',locationKey:'holiland',isFlexible:true},
+          {id:'huangpu-yacht',category:'sightseeing',title:'황푸강 요트 야경',description:'선착장 · 예약 확정 필요',startTime:'20:20',endTime:'21:40',locationKey:'yachtPier',status:'planned',isFlexible:true},
+          {id:'yacht-to-hotel',category:'transport',title:'호텔 복귀',startTime:'21:40',timeLabel:'이후',transport:'황푸강 선착장 → JI Hotel'}
         ]),
         day(4,'2026-09-21','귀국',[
           {id:'wake-checkout-ready',category:'preparation',title:'기상 및 체크아웃 준비',startTime:'06:30',endTime:'07:00'},
@@ -5148,35 +5159,46 @@
     let schedulePhotoObserver=null,schedulePhotoFallbackCleanup=null;
     const schedulePhotoRequests=new Map(),schedulePhotoCache=new Map(),schedulePhotoMisses=new Set();
     const CURATED_PLACE_IMAGES=[
+      {keys:['oz363','인천출발','인천국제공항'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Incheon_International_Airport_Terminal_1_Departure.jpg?width=960',name:'Arne Müseler · Wikimedia Commons (CC BY-SA 3.0 DE) · 인천공항 출국장',uri:'https://commons.wikimedia.org/wiki/File:Incheon_International_Airport_Terminal_1_Departure.jpg'},
+      {keys:['oz362','푸동공항','입국심사','항공체크인','출국심사'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Inside_view_of_Shanghai_Pudong_International_Airport.JPG?width=960',name:'Soramimi · Wikimedia Commons (CC BY-SA 4.0) · 푸동공항',uri:'https://commons.wikimedia.org/wiki/File:Inside_view_of_Shanghai_Pudong_International_Airport.JPG'},
+      {keys:['jihotel','호텔체크인','호텔휴식','호텔체크아웃','기상및체크아웃준비','외출준비','호텔복귀'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/%E5%85%A8%E5%AD%A3%E9%85%92%E5%BA%97%EF%BC%88%E4%B8%8A%E6%B5%B7%E4%BA%94%E8%A7%92%E5%9C%BA%E9%95%BF%E6%B5%B7%E5%8C%BB%E9%99%A2%E5%BA%97%EF%BC%89.jpg?width=960',name:'MomodaniSakura · Wikimedia Commons (CC BY-SA 4.0) · JI Hotel 외관',uri:'https://commons.wikimedia.org/wiki/File:%E5%85%A8%E5%AD%A3%E9%85%92%E5%BA%97%EF%BC%88%E4%B8%8A%E6%B5%B7%E4%BA%94%E8%A7%92%E5%9C%BA%E9%95%BF%E6%B5%B7%E5%8C%BB%E9%99%A2%E5%BA%97%EF%BC%89.jpg'},
+      {keys:['릴리안베이커리','莉莲蛋挞','lillianbakery'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Pastel_de_Nata_-_Casa_Ferreira_2024-11-28.jpg?width=960',name:'Andy Li · Wikimedia Commons (CC0) · 에그타르트',uri:'https://commons.wikimedia.org/wiki/File:Pastel_de_Nata_-_Casa_Ferreira_2024-11-28.jpg'},
+      {keys:['헌지우이치엔','헌지우치엔','很久以前'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Lamb_kebabs_on_grill_at_Ancient_City_of_Kashi_%2820230923224509%29.jpg?width=960',name:'N509FZ · Wikimedia Commons (CC BY-SA 4.0) · 양꼬치',uri:'https://commons.wikimedia.org/wiki/File:Lamb_kebabs_on_grill_at_Ancient_City_of_Kashi_%2820230923224509%29.jpg'},
+      {keys:['런허관','人和馆'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Shengjian_Mantou_on_a_Pan.jpg?width=960',name:'Luca Mascaro · Wikimedia Commons (CC BY-SA 2.0) · 상하이 생젠만두',uri:'https://commons.wikimedia.org/wiki/File:Shengjian_Mantou_on_a_Pan.jpg'},
+      {keys:['프라다미샹','롱자이','rongzhai'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Delightful_afternoon_tea_served_with_sweets_and_floral_decorations.jpg?width=960',name:'Shixart1985 · Wikimedia Commons (CC BY 2.0) · 애프터눈 티',uri:'https://commons.wikimedia.org/wiki/File:Delightful_afternoon_tea_served_with_sweets_and_floral_decorations.jpg'},
+      {keys:['아마론','amalon'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Bakery_products_on_the_counter_of_Jacob%27s_Bakery_%2B_Cafe_2024-04-15.jpg?width=960',name:'Andy Li · Wikimedia Commons (CC0) · 베이커리',uri:'https://commons.wikimedia.org/wiki/File:Bakery_products_on_the_counter_of_Jacob%27s_Bakery_%2B_Cafe_2024-04-15.jpg'},
+      {keys:['아마수작','阿嬤手作','amashouzuo'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Brown_sugar_boba_tea_at_Boba_Heaven%2C_downtown_Evanston%2C_IL.jpg?width=960',name:'~delta · Wikimedia Commons (CC BY-SA 4.0) · 흑당 밀크티',uri:'https://commons.wikimedia.org/wiki/File:Brown_sugar_boba_tea_at_Boba_Heaven%2C_downtown_Evanston%2C_IL.jpg'},
+      {keys:['홍쿠이지아','홍쿠아지아','红盔甲'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/%E9%BA%BB%E8%BE%A3%E5%B0%8F%E9%BE%99%E8%99%BE.jpg?width=960',name:'Suginami · Wikimedia Commons (CC BY-SA 4.0) · 마라롱샤',uri:'https://commons.wikimedia.org/wiki/File:%E9%BA%BB%E8%BE%A3%E5%B0%8F%E9%BE%99%E8%99%BE.jpg'},
+      {keys:['홀리랜드','好利来','holiland'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/HK_CWB_Windsor_House_Paul_Lafayet_Bakery_shop_cake_food_counter_May-2012.JPG?width=960',name:'Wikimedia Commons (CC BY-SA 3.0) · 케이크 쇼케이스',uri:'https://commons.wikimedia.org/wiki/File:HK_CWB_Windsor_House_Paul_Lafayet_Bakery_shop_cake_food_counter_May-2012.JPG'},
+      {keys:['점도덕','点都德','diandude'],src:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Chinese_DimSum_%289023590541%29.jpg/960px-Chinese_DimSum_%289023590541%29.jpg',name:'LeonardKong · Wikimedia Commons · 딤섬',uri:'https://commons.wikimedia.org/wiki/File:Chinese_DimSum_(9023590541).jpg'},
+      {keys:['레드립스','红唇串串香','redlips'],src:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Malatang2025.jpg/960px-Malatang2025.jpg',name:'Lukas010109 · Wikimedia Commons (CC0) · 마라탕',uri:'https://commons.wikimedia.org/wiki/File:Malatang2025.jpg'},
+      {keys:['과일배달'],src:'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=960&q=82',name:'Unsplash · 과일',uri:'https://unsplash.com/photos/assorted-fruits-on-brown-wooden-table-M_xIaxQE3Ms'},
+      {keys:['각자자유저녁','자유저녁'],src:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Bright_Lights_of_Nanjing_Road_%282865805274%29.jpg/960px-Bright_Lights_of_Nanjing_Road_%282865805274%29.jpg',name:'cogdogblog · Wikimedia Commons (CC0) · 상하이 밤거리',uri:'https://commons.wikimedia.org/wiki/File:Bright_Lights_of_Nanjing_Road_(2865805274).jpg'},
+      {keys:['간단한조식','조식'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Chinese_typical_breakfast.JPG?width=960',name:'Wikimedia Commons · 중국식 조식',uri:'https://commons.wikimedia.org/wiki/File:Chinese_typical_breakfast.JPG'},
+      {keys:['황푸강요트','요트야경','유람선'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/DSC00248%E9%BB%84%E6%B5%A6%E6%B1%9F%E4%B8%8A%E8%A7%82%E5%85%89%E6%B8%B8%E8%88%B9.jpg?width=960',name:'Wikimedia Commons (CC BY-SA 4.0) · 황푸강 야간 유람선',uri:'https://commons.wikimedia.org/wiki/File:DSC00248%E9%BB%84%E6%B5%A6%E6%B1%9F%E4%B8%8A%E8%A7%82%E5%85%89%E6%B8%B8%E8%88%B9.jpg'},
+      {keys:['와이탄','외탄','thebund'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/The_Bund_at_night%2C_Shanghai%2C_Aug_10_2023.jpg?width=960',name:'A Chinese ID · Wikimedia Commons (CC BY-SA 4.0) · 와이탄 야경',uri:'https://commons.wikimedia.org/wiki/File:The_Bund_at_night%2C_Shanghai%2C_Aug_10_2023.jpg'},
+      {keys:['동방명주','orientalpearltower'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Oriental_Pearl_Tower_at_night_20260418_%281%29.jpg?width=960',name:'Wikimedia Commons (CC0) · 동방명주 야경',uri:'https://commons.wikimedia.org/wiki/File:Oriental_Pearl_Tower_at_night_20260418_%281%29.jpg'},
+      {keys:['예원','豫园','yuyuangarden'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Yuyuan_Garden.jpg?width=960',name:'Wikimedia Commons · 예원',uri:'https://commons.wikimedia.org/wiki/File:Yuyuan_Garden.jpg'},
+      {keys:['우캉루','우캉맨션','wukangmansion'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Wukang_Mansion_%2820191114161507%29.jpg?width=960',name:'N509FZ · Wikimedia Commons · 우캉맨션',uri:'https://commons.wikimedia.org/wiki/File:Wukang_Mansion_%2820191114161507%29.jpg'},
+      {keys:['신천지','新天地','xintiandi'],src:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Xingye_Rd%2C_eastward_%2820250610162831%29.jpg/960px-Xingye_Rd%2C_eastward_%2820250610162831%29.jpg',name:'N509FZ · Wikimedia Commons · 신천지',uri:'https://commons.wikimedia.org/wiki/File:Xingye_Rd,_eastward_(20250610162831).jpg'},
+      {keys:['주자자오','수향마을','zhujiajiao'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Zhujiajiao_3.jpg?width=960',name:'Wikimedia Commons · 주자자오 수향마을',uri:'https://commons.wikimedia.org/wiki/File:Zhujiajiao_3.jpg'},
+      {keys:['난징동루','nanjingeastroad'],src:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Bright_Lights_of_Nanjing_Road_%282865805274%29.jpg/960px-Bright_Lights_of_Nanjing_Road_%282865805274%29.jpg',name:'cogdogblog · Wikimedia Commons (CC0) · 난징동루',uri:'https://commons.wikimedia.org/wiki/File:Bright_Lights_of_Nanjing_Road_(2865805274).jpg'},
       {keys:['theshanghaiedition'],src:'https://cache.marriott.com/content/dam/marriott-renditions/SHAEB/shaeb-urban-lobby-6804-hor-wide.jpg?output-quality=80&interpolation=progressive-bilinear&downsize=900px:*',name:'The Shanghai EDITION 공식 갤러리',uri:'https://www.marriott.com/en-us/hotels/shaeb-the-shanghai-edition/photos/'},
-      {keys:['와이탄','외탄','thebund'],src:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/The_Bund_20250501.jpg/960px-The_Bund_20250501.jpg',name:'Suicasmo · Wikimedia Commons (CC0)',uri:'https://commons.wikimedia.org/wiki/File:The_Bund_20250501.jpg'},
-      {keys:['난징동루','nanjingeastroad'],src:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Bright_Lights_of_Nanjing_Road_%282865805274%29.jpg/960px-Bright_Lights_of_Nanjing_Road_%282865805274%29.jpg',name:'cogdogblog · Wikimedia Commons (CC0)',uri:'https://commons.wikimedia.org/wiki/File:Bright_Lights_of_Nanjing_Road_(2865805274).jpg'},
-      {keys:['레드립스','红唇串串香','redlips'],src:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Malatang2025.jpg/960px-Malatang2025.jpg',name:'Lukas010109 · Wikimedia Commons (CC0)',uri:'https://commons.wikimedia.org/wiki/File:Malatang2025.jpg'},
-      {keys:['지엔삥','지엔빙','煎饼','jianbing'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Preparing_Jianbing_in_Binhai%2C_Tianjin_%2820191006080542%29.jpg?width=960',name:'Wikimedia Commons · Jianbing',uri:'https://commons.wikimedia.org/wiki/File:Preparing_Jianbing_in_Binhai,_Tianjin_(20191006080542).jpg'},
-      {keys:['예원','豫园','yuyuangarden'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Yuyuan_Garden.jpg?width=960',name:'Wikimedia Commons · Yu Garden',uri:'https://commons.wikimedia.org/wiki/File:Yuyuan_Garden.jpg'},
-      {keys:['상하이성황묘','城隍庙','citygodtemple'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/City_God_Temple.jpg?width=960',name:'Baycrest · Wikimedia Commons',uri:'https://commons.wikimedia.org/wiki/File:City_God_Temple.jpg'},
-      {keys:['점도덕','点都德','diandude'],src:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Chinese_DimSum_%289023590541%29.jpg/960px-Chinese_DimSum_%289023590541%29.jpg',name:'LeonardKong · Wikimedia Commons',uri:'https://commons.wikimedia.org/wiki/File:Chinese_DimSum_(9023590541).jpg'},
-      {keys:['신천지','新天地','xintiandi'],src:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Xingye_Rd%2C_eastward_%2820250610162831%29.jpg/960px-Xingye_Rd%2C_eastward_%2820250610162831%29.jpg',name:'N509FZ · Wikimedia Commons',uri:'https://commons.wikimedia.org/wiki/File:Xingye_Rd,_eastward_(20250610162831).jpg'},
-      {keys:['대한민국임시정부유적지','provisionalgovernmentoftherepublicofkorea'],src:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Entrance_of_Provisional_Government_of_ROK_in_Shanghai.JPG/960px-Entrance_of_Provisional_Government_of_ROK_in_Shanghai.JPG',name:'Ericmetro · Wikimedia Commons',uri:'https://commons.wikimedia.org/wiki/File:Entrance_of_Provisional_Government_of_ROK_in_Shanghai.JPG'},
-      {keys:['상하이박물관','shanghaimuseum'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Shanghai_Museum_building.JPG?width=960',name:'Jpbowen · Wikimedia Commons',uri:'https://commons.wikimedia.org/wiki/File:Shanghai_Museum_building.JPG'},
-      {keys:['우캉루','우캉맨션','wukangmansion'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Wukang_Mansion_%2820191114161507%29.jpg?width=960',name:'N509FZ · Wikimedia Commons',uri:'https://commons.wikimedia.org/wiki/File:Wukang_Mansion_(20191114161507).jpg'},
-      {keys:['안푸루','anfuroad'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/A_brunch_spot_at_Anfu_Rd.jpg?width=960',name:'Wikimedia Commons · Anfu Road',uri:'https://commons.wikimedia.org/wiki/File:A_brunch_spot_at_Anfu_Rd.jpg'},
-      {keys:['톈즈팡','티엔즈팡','田子坊','tianzifang'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Shanghai_Tianzifang_%E4%B8%8A%E6%B5%B7%E7%94%B0%E5%AD%90%E5%9D%8A_-_panoramio.jpg?width=960',name:'Wikimedia Commons · Tianzifang',uri:'https://commons.wikimedia.org/wiki/File:Shanghai_Tianzifang_%E4%B8%8A%E6%B5%B7%E7%94%B0%E5%AD%90%E5%9D%8A_-_panoramio.jpg'},
-      {keys:['정안사','静安寺','jingantemple'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Jing%27an_Temple.jpg?width=960',name:'Drew Lietzow · Wikimedia Commons (Public domain)',uri:'https://commons.wikimedia.org/wiki/File:Jing%27an_Temple.jpg'},
-      {keys:['동방명주','orientalpearltower'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/ShanghaiPearlTower.jpg?width=960',name:'Robpics69 · Wikimedia Commons (Public domain)',uri:'https://commons.wikimedia.org/wiki/File:ShanghaiPearlTower.jpg'},
-      {keys:['oz363','oz362','푸동공항','인천국제공항','입국심사','항공체크인','출국심사'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Inside_view_of_Shanghai_Pudong_International_Airport.JPG?width=960',name:'Soramimi · Wikimedia Commons (CC BY-SA 4.0)',uri:'https://commons.wikimedia.org/wiki/File:Inside_view_of_Shanghai_Pudong_International_Airport.JPG'},
-      {keys:['jihotel','호텔체크인','호텔휴식','호텔체크아웃','기상및체크아웃준비'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Elegant_hotel_room_with_dining_setup_and_cozy_ambiance_near_the_city_center_in_the_early_morning.jpg?width=960',name:'Wikimedia Commons · Hotel room (CC BY 2.0)',uri:'https://commons.wikimedia.org/wiki/File:Elegant_hotel_room_with_dining_setup_and_cozy_ambiance_near_the_city_center_in_the_early_morning.jpg'},
-      {keys:['조식및외출준비','간단한조식'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Chinese_typical_breakfast.JPG?width=960',name:'Wikimedia Commons · Chinese breakfast',uri:'https://commons.wikimedia.org/wiki/File:Chinese_typical_breakfast.JPG'},
-      {keys:['과일배달'],src:'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=960&q=82',name:'Unsplash · Fresh fruit',uri:'https://unsplash.com/photos/assorted-fruits-on-brown-wooden-table-M_xIaxQE3Ms'},
-      {keys:['주자자오','zhujiajiao'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Zhujiajiao_3.jpg?width=960',name:'Wikimedia Commons · Zhujiajiao',uri:'https://commons.wikimedia.org/wiki/File:Zhujiajiao_3.jpg'},
-      {keys:['하이디라오','haidilao'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/DZ3_0594_Sizzling_thinly_sliced_beef_and_vegetables_cook_on_a_tabletop_Thai_barbecue_and_hot_pot_combo_steam_rising_as_diners_pick_pieces_with_chopsticks_and_a_fork.jpg?width=960',name:'PattayaPatrol · Wikimedia Commons',uri:'https://commons.wikimedia.org/wiki/File:DZ3_0594_Sizzling_thinly_sliced_beef_and_vegetables_cook_on_a_tabletop_Thai_barbecue_and_hot_pot_combo_steam_rising_as_diners_pick_pieces_with_chopsticks_and_a_fork.jpg'}
+      {keys:['상하이성황묘','城隍庙','citygodtemple'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/City_God_Temple.jpg?width=960',name:'Baycrest · Wikimedia Commons · 상하이 성황묘',uri:'https://commons.wikimedia.org/wiki/File:City_God_Temple.jpg'},
+      {keys:['상하이박물관','shanghaimuseum'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Shanghai_Museum_building.JPG?width=960',name:'Jpbowen · Wikimedia Commons · 상하이 박물관',uri:'https://commons.wikimedia.org/wiki/File:Shanghai_Museum_building.JPG'},
+      {keys:['안푸루','anfuroad'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/A_brunch_spot_at_Anfu_Rd.jpg?width=960',name:'Wikimedia Commons · 안푸루',uri:'https://commons.wikimedia.org/wiki/File:A_brunch_spot_at_Anfu_Rd.jpg'},
+      {keys:['톈즈팡','티엔즈팡','田子坊','tianzifang'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Shanghai_Tianzifang_%E4%B8%8A%E6%B5%B7%E7%94%B0%E5%AD%90%E5%9D%8A_-_panoramio.jpg?width=960',name:'Wikimedia Commons · 톈즈팡',uri:'https://commons.wikimedia.org/wiki/File:Shanghai_Tianzifang_%E4%B8%8A%E6%B5%B7%E7%94%B0%E5%AD%90%E5%9D%8A_-_panoramio.jpg'},
+      {keys:['정안사','静安寺','jingantemple'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Jing%27an_Temple.jpg?width=960',name:'Drew Lietzow · Wikimedia Commons (Public domain) · 정안사',uri:'https://commons.wikimedia.org/wiki/File:Jing%27an_Temple.jpg'},
+      {keys:['지엔삥','지엔빙','煎饼','jianbing'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Preparing_Jianbing_in_Binhai%2C_Tianjin_%2820191006080542%29.jpg?width=960',name:'Wikimedia Commons · 지엔빙',uri:'https://commons.wikimedia.org/wiki/File:Preparing_Jianbing_in_Binhai%2C_Tianjin_%2820191006080542%29.jpg'},
+      {keys:['대한민국임시정부유적지','provisionalgovernmentoftherepublicofkorea'],src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Entrance_of_Provisional_Government_of_ROK_in_Shanghai.JPG?width=960',name:'Ericmetro · Wikimedia Commons · 대한민국임시정부',uri:'https://commons.wikimedia.org/wiki/File:Entrance_of_Provisional_Government_of_ROK_in_Shanghai.JPG'}
     ];
     const CURATED_CATEGORY_IMAGES={
       flight:{src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Inside_view_of_Shanghai_Pudong_International_Airport.JPG?width=960',name:'Soramimi · Wikimedia Commons (CC BY-SA 4.0)',uri:'https://commons.wikimedia.org/wiki/File:Inside_view_of_Shanghai_Pudong_International_Airport.JPG'},
-      accommodation:{src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Elegant_hotel_room_with_dining_setup_and_cozy_ambiance_near_the_city_center_in_the_early_morning.jpg?width=960',name:'Wikimedia Commons · Hotel room (CC BY 2.0)',uri:'https://commons.wikimedia.org/wiki/File:Elegant_hotel_room_with_dining_setup_and_cozy_ambiance_near_the_city_center_in_the_early_morning.jpg'},
+      accommodation:{src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/%E5%85%A8%E5%AD%A3%E9%85%92%E5%BA%97%EF%BC%88%E4%B8%8A%E6%B5%B7%E4%BA%94%E8%A7%92%E5%9C%BA%E9%95%BF%E6%B5%B7%E5%8C%BB%E9%99%A2%E5%BA%97%EF%BC%89.jpg?width=960',name:'MomodaniSakura · Wikimedia Commons (CC BY-SA 4.0) · JI Hotel 외관',uri:'https://commons.wikimedia.org/wiki/File:%E5%85%A8%E5%AD%A3%E9%85%92%E5%BA%97%EF%BC%88%E4%B8%8A%E6%B5%B7%E4%BA%94%E8%A7%92%E5%9C%BA%E9%95%BF%E6%B5%B7%E5%8C%BB%E9%99%A2%E5%BA%97%EF%BC%89.jpg'},
       food:{src:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Chinese_DimSum_%289023590541%29.jpg/960px-Chinese_DimSum_%289023590541%29.jpg',name:'LeonardKong · Wikimedia Commons',uri:'https://commons.wikimedia.org/wiki/File:Chinese_DimSum_(9023590541).jpg'},
       cafe:{src:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=960&q=82',name:'Unsplash · Coffee',uri:'https://unsplash.com/photos/coffee-beans-on-brown-wooden-table-nzyzAUsbV0M'},
-      sightseeing:{src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Shanghai_skyline_from_the_bund.jpg?width=960',name:'Wikimedia Commons · Shanghai skyline',uri:'https://commons.wikimedia.org/wiki/File:Shanghai_skyline_from_the_bund.jpg'},
+      sightseeing:{src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Shanghai_skyline_from_the_bund.jpg?width=960',name:'Wikimedia Commons · 상하이 스카이라인',uri:'https://commons.wikimedia.org/wiki/File:Shanghai_skyline_from_the_bund.jpg'},
+      transport:{src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Type_1_%22Watermelon%22_Train_of_Line_2_leaving_Yuandong_Avenue_Station%2C_Shanghai_Metro%2C_Aug_11_2023.jpg?width=960',name:'A Chinese ID · Wikimedia Commons (CC BY-SA 4.0) · 상하이 지하철',uri:'https://commons.wikimedia.org/wiki/File:Type_1_%22Watermelon%22_Train_of_Line_2_leaving_Yuandong_Avenue_Station,_Shanghai_Metro,_Aug_11_2023.jpg'},
       freeTime:{src:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Xingye_Rd%2C_eastward_%2820250610162831%29.jpg/960px-Xingye_Rd%2C_eastward_%2820250610162831%29.jpg',name:'N509FZ · Wikimedia Commons',uri:'https://commons.wikimedia.org/wiki/File:Xingye_Rd,_eastward_(20250610162831).jpg'},
       preparation:{src:'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=960&q=82',name:'Unsplash · Travel preparation',uri:'https://unsplash.com/photos/brown-leather-bag-beside-map-and-camera-HoEYgBL_Gcs'}
     };
@@ -5307,7 +5329,7 @@
     const mapProvider=MapProviders.google;
 
     const citySearchContext={
-      '상하이':{latitude:31.2304,longitude:121.4737,region:'cn',localLanguage:'zh-CN',localCity:'上海',englishCity:'Shanghai',radius:50000,queryAliases:{'점도덕':['点都德 中海环宇荟','Diandude Shanghai'],'디안두더':['点都德 中海环宇荟','Diandude Shanghai'],'헌지우이치엔':['很久以前羊肉串 云南南路','Long Time Ago BBQ Shanghai'],'헌지우치엔':['很久以前羊肉串 云南南路','Long Time Ago BBQ Shanghai'],'레드립스':['红唇串串香 RedLips 宏伊广场'],'런허관':['人和馆 肇嘉浜路','Ren He Guan Shanghai'],'지엔삥':['煎饼 上海'],'지엔빙':['煎饼 上海'],'하이디라오':['海底捞 南京东路','Haidilao Nanjing East Road'],'샤오양셩젠':['小杨生煎',"Yang's Dumpling"],'난상만두':['南翔馒头店','Nanxiang Steamed Bun Restaurant'],'예원':['豫园','Yuyuan Garden'],'와이탄':['外滩','The Bund'],'신천지':['新天地','Xintiandi'],'난징동루':['南京东路','Nanjing East Road']}},
+      '상하이':{latitude:31.2304,longitude:121.4737,region:'cn',localLanguage:'zh-CN',localCity:'上海',englishCity:'Shanghai',radius:50000,queryAliases:{'점도덕':['点都德 中海环宇荟','Diandude Shanghai'],'디안두더':['点都德 中海环宇荟','Diandude Shanghai'],'헌지우이치엔':['很久以前羊肉串 云南南路','Long Time Ago BBQ Shanghai'],'헌지우치엔':['很久以前羊肉串 云南南路','Long Time Ago BBQ Shanghai'],'레드립스':['红唇串串香 RedLips 宏伊广场'],'런허관':['人和馆 肇嘉浜路','Ren He Guan Shanghai'],'지엔삥':['煎饼 上海'],'지엔빙':['煎饼 上海'],'하이디라오':['海底捞 南京东路','Haidilao Nanjing East Road'],'릴리안베이커리':['莉莲蛋挞 新世界城','Lillian Bakery Shanghai'],'아마론 베이커리 타운':['Amalon Bakery Town 南京西路'],'아마수작 신천지':['阿嬤手作 新天地','A Ma Hand Made Xintiandi'],'홀리랜드 Travel 정대광장점':['好利来 正大广场','Holiland Travel Super Brand Mall'],'홍쿠이지아':['红盔甲 小龙虾 金陵东路','Hongkuijia Shanghai'],'프라다 미샹 카페 (롱자이)':['Prada 荣宅 陕西北路','Mi Shang Prada Rong Zhai'],'샤오양셩젠':['小杨生煎',"Yang's Dumpling"],'난상만두':['南翔馒头店','Nanxiang Steamed Bun Restaurant'],'예원':['豫园','Yuyuan Garden'],'와이탄':['外滩','The Bund'],'신천지':['新天地','Xintiandi'],'난징동루':['南京东路','Nanjing East Road']}},
       '도쿄':{latitude:35.6762,longitude:139.6503,region:'jp',localLanguage:'ja',localCity:'東京',englishCity:'Tokyo',radius:50000,queryAliases:{'시부야스카이':['渋谷スカイ','Shibuya Sky'],'돈키호테':['ドン・キホーテ','Don Quijote'],'도쿄역':['東京駅','Tokyo Station'],'센소지':['浅草寺','Senso-ji'],'메이지신궁':['明治神宮','Meiji Jingu']}}
     };
     citySearchContext.Shanghai=citySearchContext['상하이'];
